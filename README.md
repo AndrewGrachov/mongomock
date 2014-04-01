@@ -34,22 +34,33 @@ mongo.collection('fruits').find({price:20},function(err,fruits){
 
 #Methods support
   **collection.find(query,options,callback)**
+  
   **collection.findOne(query,callback)**
+  
   **collection.update(query,modifier,options,callback)**
+  
   **collection.insert(doc,callback)**
 
 #Query operators support:
   **$gte**
+  
   **$gt**
+  
   **$lt**
+  
   **$lte**
+  
   **$in**
+  
   **$regex**
   
 #Modifier operators support
   **$set**
+  
   **$unset**
+  
   **$inc**
+  
   **$addToSet**
 
 #Todo
