@@ -5,7 +5,7 @@ mock for mongoDb to use in unit tests
 Trying to cover-up mongo native nodejs driver interface, to make support for proper unit testing without flooding the db.
 
 #Dependencies
-None for now, and not planned
+**bson**
 
 #Usage
 
