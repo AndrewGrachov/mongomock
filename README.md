@@ -32,21 +32,29 @@ mongo.collection('fruits').find({price:20},function(err,fruits){
 })
 ```
 
+#Methods support
+  **collection.find(query,options,callback)**
+  **collection.findOne(query,callback)**
+  **collection.update(query,modifier,options,callback)**
+  **collection.insert(doc,callback)**
+
 #Query operators support:
-  *$gte*
-  *$gt*
-  *$lt*
-  *$lte*
-  *$in*
-  *$regex*
+  **$gte**
+  **$gt**
+  **$lt**
+  **$lte**
+  **$in**
+  **$regex**
   
 #Modifier operators support
-  *$set*
-  *$unset*
-  *$inc*
-  *$addToSet*
-  
+  **$set**
+  **$unset**
+  **$inc**
+  **$addToSet**
+
 #Todo
-1.ObjectId
-2.Date(and types) support
+1. ObjectId
+2. findAndModify support
+3. Date(and types) support
+4. projections support
  
