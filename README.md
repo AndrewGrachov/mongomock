@@ -58,9 +58,9 @@ mongo.collection('fruits').find({price:20},function(err,fruits){
 
   **$regex**
 
-  **$and
+  **$and**
 
-  **$or
+  **$or**
 
 #Modifier operators support
   **$set**

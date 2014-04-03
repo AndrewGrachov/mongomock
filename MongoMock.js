@@ -9,7 +9,9 @@ function MongoMock (collections) {
 		self[key] = new Collection(collections[key]);
 	});
 }
+
 MongoMock.prototype.collection = function(collectionName) {
 	return this[collectionName];
-}
+};
+
 module.exports = MongoMock;

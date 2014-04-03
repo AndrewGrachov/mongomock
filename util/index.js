@@ -14,9 +14,9 @@ var specialConditions = {
 			return _allKeysValid(condition,doc);
 		});
 	}
-}
+};
 //todo:wtf
-function resolveEquality (field1,field2) {
+function areEqual (field1,field2) {
 	if (field1 instanceof ObjectID) {
 		return field1.toString() === field2.toString();
 	}
@@ -25,16 +25,16 @@ function resolveEquality (field1,field2) {
 }
 
 function _updateDoc(doc,modifier,wrapped) {
-	var self = this;
+
 	Object.keys(modifier).forEach(function(key) {
 		if(!modifiers[key]){
-			throw 'this modifier is not supported for now or invalid: '+ key
+			throw 'this modifier is not supported for now or invalid: '+ key;
 		}
 		else {
 			var modifiedDoc = modifiers[key](doc,modifier[key]);
 			var index = wrapped._data.indexOf(doc);
 			wrapped._data[index] = modifiedDoc;
-		};
+		}
 	});
 	return;
 }
@@ -60,13 +60,13 @@ function _allKeysValid(query,item) {
 				return conditionals[operator](item,key,query[key][operator]);
 			});
 		}
-		return query[key] == item[key];
+		return areEqual (query[key], item[key]);
 	});
 }
 
 Wrap.prototype.find = function(query,options) {
 	var filteredArray = this._data.filter(function(item){
-		return _allKeysValid(query,item)
+		return _allKeysValid(query,item);
 	});
 
 	if (options.skip) {
@@ -78,15 +78,16 @@ Wrap.prototype.find = function(query,options) {
 	}
 
 	return filteredArray;
-}
+};
+
 Wrap.prototype.findOne = function(query) {
-	for(var i=0;i<this._data.length;i++){
-		if(_allKeysValid(query,this._data[i])){
+	for (var i=0; i<this._data.length; i++) {
+		if (_allKeysValid(query,this._data[i])) {
 			return this._data[i];
 		}
 	}
 	return;
-}
+};
 
 Wrap.prototype.update = function (query,modifier,options) {
 	var self = this;
@@ -112,7 +113,7 @@ Wrap.prototype.update = function (query,modifier,options) {
 		}
 	}
 	return counter;
-}
+};
 
 Wrap.prototype.insert = function (doc) {
 	if (!doc._id || !doc._id instanceof ObjectID) {
@@ -120,7 +121,7 @@ Wrap.prototype.insert = function (doc) {
 	}
 	this._data.push(doc);
 	return doc;
-}
+};
 
 Wrap.prototype.remove = function (query) {
 	var self = this;
@@ -130,14 +131,16 @@ Wrap.prototype.remove = function (query) {
 		self._data = self._data.splice(self._data.indexOf(doc),1);
 	});
 	return;
-}
+};
 
 Wrap.prototype.findAndModify = function (query,modifier,options) {
+	options = options || {};
+
 	var doc = this.findOne(query);
 	if (doc) {
 		_updateDoc(doc,modifier,this);
 	}
 	return doc;
-}
+};
 
 module.exports = Constructor;
