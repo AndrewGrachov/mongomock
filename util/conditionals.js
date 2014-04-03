@@ -30,7 +30,7 @@ module.exports ={
 		}
 	},
 	'$regex':function(doc,field,value){
-		return value.match(doc[field]);
+		return value.test(doc[field]);
 	}
 
 }

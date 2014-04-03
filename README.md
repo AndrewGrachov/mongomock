@@ -10,7 +10,7 @@ Trying to cover-up mongo native nodejs driver interface, to make support for pro
 #Usage
 
 1. Download/clone repo.
-2. Put anywhere and use as basic node module by calling 
+2. Put anywhere and use as basic node module by calling
     ```require('./mongomock')``` for example.npm is on the way
 
 #Getting started
@@ -34,38 +34,44 @@ mongo.collection('fruits').find({price:20},function(err,fruits){
 
 #Methods support
   **collection.find(query,options,callback)**
-  
+
   **collection.findOne(query,callback)**
-  
+
   **collection.update(query,modifier,options,callback)**
-  
+
   **collection.insert(doc,callback)**
+
+  **collection.remove(query,callback)**
+
+  **collection.findAndModify(doc,modifier,options,callback)**
 
 #Query operators support:
   **$gte**
-  
+
   **$gt**
-  
+
   **$lt**
-  
+
   **$lte**
-  
+
   **$in**
-  
+
   **$regex**
-  
+
+  **$and
+
+  **$or
+
 #Modifier operators support
   **$set**
-  
+
   **$unset**
-  
+
   **$inc**
-  
+
   **$addToSet**
 
 #Todo
-1. ObjectId
-2. findAndModify support
-3. Date(and types) support
-4. projections support
- 
+1. Date(and types) support
+2. projections support
+
