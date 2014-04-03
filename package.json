@@ -10,7 +10,10 @@
   },
   "devDependencies": {
     "jshint": "*",
-    "mocha-jshint": "0.0.7"
+    "mocha-jshint": "0.0.7",
+    "chai": "^1.9.1",
+    "sinon": "^1.9.1",
+    "sinon-chai": "^2.5.0"
   },
   "scripts": {
     "test": "node test.js"
