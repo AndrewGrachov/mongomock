@@ -1,19 +1,104 @@
-var conditionals = require("./conditionals");
 var modifiers = require('./modifiers');
 var bson = require('bson');
 var ObjectID = bson.ObjectID;
 
-var specialConditions = {
+var comparsionOperators = {
+	'$gt': function(doc, field, value) {
+		return doc[field]>value;
+	},
+	'$gte': function(doc, field, value) {
+		return doc[field]>=value;
+	},
+	'$lt': function(doc, field, value) {
+		return doc[field]<value;
+	},
+	'$lte': function(doc, field, value) {
+		return doc[field]<=value;
+	},
+
+	'$in': function(doc, field, value) {
+		if(!value instanceof Array){
+			throw 'should set an array for $in call';
+		}
+		if(doc[field] instanceof Array){
+			return doc[field].some(function(docFieldItem) {
+				return value.some(function(valueFieldItem) {
+					return docFieldItem == valueFieldItem;
+				});
+			});
+		}
+		else{
+			return value.some(function(valueItem) {
+				return doc[field] == valueItem;
+			});
+		}
+	},
+	$nin: function(doc, field, value) {
+		return !this.$in(doc, field, value);
+	},
+	'$regex': function(doc, field, value) {
+		return value.test(doc[field]);
+	},
+
+	'$ne': function(doc, field, value) {
+		return doc[field] != value;
+	},
+
+	'$exists': function(doc, field, value) {
+		return (doc[field] !== undefined) === value; //null values does not include
+	},
+
+	$size: function(doc, field, value) {
+		if (doc[field] && doc[field].length ) {
+			return doc[field].length === value;
+		}
+		return false;
+	},
+
+	$all: function(doc, field, value) {
+		if (doc[field]) {
+			return value.every(function (valueItem) {
+				doc[field].some(function (docFieldItem) {
+					docFieldItem == valueItem;
+				});
+			});
+		}
+		return false;
+	},
+
+	$elemMatch: function(doc, field, condition) {
+		if(doc[field]){
+		return doc[field].some(function (element) {
+			return _allKeysValid(condition,element);
+			});
+		}
+		return false;
+	}
+
+
+};
+
+var logicalOperators = {
 	$or: function(doc,array) {
 		return array.some(function (condition) {
 			return _allKeysValid(condition,doc);
 		});
 	},
+
 	$and: function(doc,array) {
 		return array.every(function (condition) {
 			return _allKeysValid(condition,doc);
 		});
+	},
+
+	$not: function(doc, condition) {
+		return !_allKeysValid(condition,doc);
+	},
+
+	$nor: function(doc,array) {
+		return !this.$and(doc,array);
 	}
+
 };
 //todo:wtf
 function areEqual (field1,field2) {
@@ -51,13 +136,13 @@ function Constructor(array) {
 
 function _allKeysValid(query,item) {
 	return Object.keys(query).every(function(key) {
-		if (specialConditions[key]){
-			return specialConditions[key](item,query[key]);
+		if (logicalOperators[key]){
+			return logicalOperators[key](item,query[key]);
 		}
 		// price:{gte:32}
 		else if(typeof query[key]=='object') {
 			return Object.keys(query[key]).every(function(operator){
-				return conditionals[operator](item,key,query[key][operator]);
+				return comparsionOperators[operator](item,key,query[key][operator]);
 			});
 		}
 		return areEqual (query[key], item[key]);

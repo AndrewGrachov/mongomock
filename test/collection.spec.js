@@ -40,8 +40,9 @@ describe('Collection test', function () {
 		it('#should return all collection', function (){
 			result.should.have.length(4);
 		});
+	});
 
-		describe('when filtering collection by basic criteria',function() {
+	describe('when filtering collection by basic criteria',function() {
 
 			before(function(done) {
 				mongo.collection('fruits').find({price:20},function(err,fruits) {
@@ -54,7 +55,24 @@ describe('Collection test', function () {
 				result.should.have.length(2);
 			});
 
-		});
+	});
+
+
+	describe('when filtering collection by complex criteria',function() {
+
+			before(function(done) {
+				var criteria = {$or:[{price:{$gte:25}} ,{tags:{ $in:['Turkey'] }} ]};
+				mongo.collection('fruits').find(criteria, function(err,fruits) {
+					result = fruits;
+					done();
+				});
+			});
+
+			it('#should return 2 fruits, one with price 25 second one with tags containing "Turkey"', function() {
+				result.should.have.length(2);
+				//todo:update
+			});
+
 	});
 
 });

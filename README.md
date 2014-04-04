@@ -62,6 +62,18 @@ mongo.collection('fruits').find({price:20},function(err,fruits){
 
   **$or**
 
+  **$ne**
+
+  **$nin**
+
+  **size**
+
+  **elemMatch**
+
+  **exists**
+
+  **all**
+
 #Modifier operators support
   **$set**
 
