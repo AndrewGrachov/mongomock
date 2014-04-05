@@ -66,13 +66,13 @@ mongo.collection('fruits').find({price:20},function(err,fruits){
 
   **$nin**
 
-  **size**
+  **$size**
 
-  **elemMatch**
+  **$elemMatch**
 
-  **exists**
+  **$exists**
 
-  **all**
+  **$all**
 
 #Modifier operators support
   **$set**
@@ -82,6 +82,14 @@ mongo.collection('fruits').find({price:20},function(err,fruits){
   **$inc**
 
   **$addToSet**
+
+  **rename**
+
+  **$pull**
+
+  **$push**
+
+  **$each**
 
 #Todo
 1. Date(and types) support
