@@ -6,6 +6,7 @@ mongoDb-native mocking library
 Also the query engine works for basic js collections as well
 
 Standalone version for a browser usage is [here](https://github.com/AndrewGrachov/mongo-query)
+
 You can try a playground [here](http://andrewgrachov.github.io/mongo-query/)
 
 #Dependencies
@@ -37,7 +38,8 @@ mongo.collection('fruits').find({price:20},function(err,fruits){
 #Testing
 
 
-Tests are using mocha. install mocha globally then run
+Tests use mocha. Install mocha globally, then run
+
 ```
 npm test
 ```
