@@ -1,22 +1,25 @@
 mongomock
 =========
 
-mock for mongoDb to use in unit tests
-Trying to cover-up mongo native nodejs driver interface, to make support for proper unit testing without flooding the db.
+mongoDb-native mocking library
+
+Also the query engine works for basic js collections as well
+
+Standalone version for a browser usage is [here](https://github.com/AndrewGrachov/mongo-query)
+You can try a playground [here](http://andrewgrachov.github.io/mongo-query/)
 
 #Dependencies
 **bson**
 
-#Usage
-
-1. Download/clone repo.
-2. Put anywhere and use as basic node module by calling
-    ```require('./mongomock')``` for example.npm is on the way
+#Install
+```
+npm install mongomock
+```
 
 #Getting started
 
 ```
-var MongoMock = require('./mongomock');
+var MongoMock = require('mongomock');
 
 //initial mock data
 var db = {
@@ -30,6 +33,13 @@ var mongo = new MongoMock(db);
 mongo.collection('fruits').find({price:20},function(err,fruits){
   console.log("YAHOO we have fruits with price 20 now!",fruits);
 })
+```
+#Testing
+
+
+Tests are using mocha. install mocha globally then run
+```
+npm test
 ```
 
 #Methods support
@@ -83,7 +93,7 @@ mongo.collection('fruits').find({price:20},function(err,fruits){
 
   **$addToSet**
 
-  **rename**
+  **$rename**
 
   **$pull**
 
@@ -91,7 +101,7 @@ mongo.collection('fruits').find({price:20},function(err,fruits){
 
   **$each**
 
-#Todo
+#On the way
 1. Date(and types) support
 2. projections support
 
