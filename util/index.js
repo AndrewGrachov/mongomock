@@ -263,6 +263,21 @@ function _allKeysValid(query,item) {
 		return query === item;
 	}
 
+	if(!query || !item) {
+		return false;
+	}
+
+	function anyMatchOf(key,pathStep,item){
+		return item[pathStep].some( function (subArrayItem) {
+			var subQueryKey = key.replace(new RegExp(pathStep+'\\.'),"");
+			var subQuery = {};
+			subQuery[subQueryKey] = query[key];
+
+			return _allKeysValid(subQuery,subArrayItem);
+		});
+	}
+
+
 	return Object.keys(query).every(function(key) {
 		if (logicalOperators[key]){
 			return logicalOperators[key](item,query[key]);
@@ -272,6 +287,32 @@ function _allKeysValid(query,item) {
 			return Object.keys(query[key]).every(function(operator) {
 				return comparsionOperators[operator](item,key,query[key][operator]);
 			});
+		}
+		else if (typeof key === 'string' && new RegExp('.*\\..*').test(key)) {
+			var properties = key.split('.');
+			var path = [];
+
+
+			for (var i = 0; i < properties.length; i++){
+				var property = properties[i];
+				path.push(property);
+				var pathStep = path.join(".");
+				if (item[pathStep] instanceof Array) {
+					var nextOperator = parseInt(properties[i+1]);
+					if (!isNaN(nextOperator)) {
+
+						var subQueryKey = key.replace(new RegExp(pathStep+'\\.'+properties[i+1]+'\\.'),"");
+						var subQuery = {};
+						subQuery[subQueryKey] = query[key];
+						var subArrayItem = item[pathStep][properties[i+1]];
+
+						return _allKeysValid(subQuery,subArrayItem);
+					} else {
+						//key,pathStepitem
+						return anyMatchOf(key,pathStep,item);
+					}
+				}
+			}
 		}
 
 		return areEqual(query[key], item[key]);

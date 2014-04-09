@@ -7,7 +7,7 @@ describe('mongo-query utility belt test',function () {
 					{name:'Apple', price:10,tags:['Africa','Turkey']},
 					{name:'Orange', price:20},
 					{name:'Pineapple', price:20},
-					{name: 'Cucumber', price:56, suppliers: [{name:"anonymous",subSuppliers:[{name:"1",address:'blahblah'}]}]}
+					{name: 'Cucumber', price:56, suppliers: [{name:"anonymous234",subSuppliers:[{name:"1",address:'blahblah'}]}]}
 					],
 			beverages:[ {name:'CocaCola',price:15,suppliers:['one','two','three']},
 						{name:'MongoCola',price:10,suppliers:['one','two','three','four','five','six']},
@@ -16,6 +16,20 @@ describe('mongo-query utility belt test',function () {
 						{name: 'ZeroVatkaCola',price:1000,suppliers:['one','two','three'],someArray:['one','two','three']}
 					]
 		};
+
+	describe('when querying with string expression on array elements',function() {
+
+		var fruits = _(db.fruits).find({'suppliers.name':'anonymous234'});
+		var subArrayFruit = _(db.fruits).findOne({'suppliers.subSuppliers.0.name':1});
+		it('#should have length 1',function() {
+			fruits.should.have.length(1);
+		});
+
+		it('#should query 1 fruit with array 2 level deep in array',function () {
+			subArrayFruit.should.exist;
+			subArrayFruit.should.have.property('name').equal('Cucumber');
+		});
+	});
 
 	describe('when perfoming update operation',function(){
 

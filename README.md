@@ -35,6 +35,14 @@ mongo.collection('fruits').find({price:20},function(err,fruits){
   console.log("YAHOO we have fruits with price 20 now!",fruits);
 })
 ```
+**Update 0.0.3**
+Now you are able to query your collections with string syntax, e.g., including arrays any level deep
+```
+db.fruits.find({'suppliers.name':'anonymous'});
+//or
+db.fruits.find({'suppliers.0.name':'anonymous'});
+```
+
 #Testing
 
 
