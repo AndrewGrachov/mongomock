@@ -1,3 +1,3 @@
-var MongoMock = require('MongoMock');
+var MongoMock = require('./MongoMock');
 module.exports = MongoMock;
 

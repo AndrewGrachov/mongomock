@@ -233,6 +233,15 @@ function areEqual (field1,field2) {
 }
 
 function _updateDoc(doc,modifier,wrapped) {
+	var isUpdatingWholeDoc = Object.keys(modifier).every(function(key) {
+		return !modifiers[key];
+	});
+
+	if(isUpdatingWholeDoc) {
+		var index = wrapped._data.indexOf(doc);
+		wrapped._data[index] = doc;
+		return;
+	}
 
 	Object.keys(modifier).forEach(function(key) {
 		if(!modifiers[key]){

@@ -28,6 +28,14 @@ Collection.prototype.find = function(query,options,callback) {
 	callback(null,data);
 };
 
+Collection.prototype.save = function (doc,callback) {
+	if (doc._id) {
+		this.update({_id:doc._id},doc,{ upsert:true }, callback);
+	} else {
+		this.insert(doc,callback);
+	}
+};
+
 Collection.prototype.findOne = function(query,callback) {
 	callback(null, _(this._data).findOne(query));
 };
