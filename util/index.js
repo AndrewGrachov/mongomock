@@ -414,7 +414,15 @@ Wrap.prototype.findAndModify = function (query,modifier,options) {
 
 	var doc = this.findOne(query);
 	if (doc) {
-		_updateDoc(doc,modifier,this);
+		if(options.new) {
+			_updateDoc(doc,modifier,this);
+		}
+		else {
+			_updateDoc(JSON.parse(JSON.stringify(doc)),modifier,this);
+		}
+	}
+	else if(!modifier.$set && options.upsert) {
+		doc = this.insert(modifier);
 	}
 	return doc;
 };

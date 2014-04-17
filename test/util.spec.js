@@ -1,4 +1,5 @@
 var _ = require('../util');
+var expect = require('expect.js');
 
 describe('mongo-query utility belt test',function () {
 	var db = {
@@ -143,6 +144,43 @@ describe('mongo-query utility belt test',function () {
 			});
 
 
+		});
+	});
+
+	describe('when performing findAndModify operation', function () {
+		describe('#when its not found', function () {
+			var fruit = _(db.fruits).findAndModify({name:'somefuckingfruit'},{$set:{name:'ololo'}});
+
+			it('should have fruit undefined',function (){
+				expect(fruit).to.not.be;
+			});
+		});
+
+		describe('#when its found and return modified object', function () {
+			var beverage = _(db.beverages).findAndModify({name:'CocaCola'},{$set:{price:199}},{new:true});
+			it('#should return new object',function () {
+				beverage.should.have.property('price').equal(199);
+			});
+		});
+
+		describe('#when its found and return non modified object', function () {
+			var beverage = _(db.beverages).findAndModify({name:'MongoCola'},{$set:{price:199}});
+			it('#should return new object',function () {
+				beverage.should.have.property('price').equal(10);
+			});
+		});
+
+		describe('#when its not found and upsert true', function () {
+			var beverage = _(db.beverages).findAndModify({name:'someRandomBeverage'},{price:100,name:"someRandomFruit"},{upsert:true});
+			it('#should return new object',function () {
+				beverage.should.have.property('price',100);
+				beverage.should.have.property('name','someRandomFruit');
+			});
+
+			it('#should add new object to collection',function () {
+				var beverage = _(db.beverages).findOne({name:'someRandomFruit'});
+				expect(beverage).to.be;
+			});
 		});
 	});
 });

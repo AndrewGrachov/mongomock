@@ -128,6 +128,7 @@ Collection.prototype.findAndModify = function(query,modifier,options,callback) {
 	}
 
 	var doc = _(this._data).findAndModify(query,modifier,options);
+	this._restore();
 	callback(null,doc);
 };
 

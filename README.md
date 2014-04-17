@@ -43,6 +43,10 @@ db.fruits.find({'suppliers.name':'anonymous'});
 db.fruits.find({'suppliers.0.name':'anonymous'});
 ```
 
+**Update 0.0.5**
+
+Proper *findAndModify* support with upsert and 'new' options
+
 #Testing
 
 
