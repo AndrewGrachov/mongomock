@@ -69,6 +69,8 @@ npm test
 
   **collection.findAndModify(doc,modifier,options,callback)**
 
+  **collection.save(doc,callback)**
+
 #Query operators support:
   **$gte**
 
