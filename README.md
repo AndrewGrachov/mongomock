@@ -1,3 +1,5 @@
+[![NPM](https://nodei.co/npm/mongomock.png?downloads=true)](https://nodei.co/npm/mongomock/)
+
 mongomock
 =========
 
