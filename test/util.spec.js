@@ -14,7 +14,7 @@ describe('mongo-query utility belt test',function () {
 						{name:'MongoCola',price:10,suppliers:['one','two','three','four','five','six']},
 						{name:'Pepsi',price:25,suppliers:['one','two','three','four','five']},
 						{name: 'BoobCola',price:999,suppliers:['one','two','three']},
-						{name: 'ZeroVatkaCola',price:1000,suppliers:['one','two','three'],someArray:['one','two','three']}
+						{name: 'ZeroVatkaCola',price:1000,suppliers:['one','two','three'],someArray:['one','two','three'], nested: {}}
 					]
 		};
 
@@ -48,7 +48,7 @@ describe('mongo-query utility belt test',function () {
 		});
 
 		describe('#when success case with multiple. Changing all prices with 20 to 30', function() {
-			var counter = _(db.fruits).update({price:20},{$set: {price:30} },{ multi:true });
+			var counter = _(db.fruits).update({price:20}, {$set: {price:30}}, { multi:true });
 			it('#should update 2 documents',function () {
 				counter.should.equal(2);
 			});
@@ -125,7 +125,7 @@ describe('mongo-query utility belt test',function () {
 				});
 
 				describe('#when adding $each modifier',function() {
-					_(db.beverages).update({name:'ZeroVatkaCola'},{$addToSet:{suppliers:{$each:['one','four','five']}}});
+					_(db.beverages).update({name:'ZeroVatkaCola'},{$addToSet: {suppliers: {$each: ['one','four','five']}}});
 					var beverage = _(db.beverages).findOne({name:'ZeroVatkaCola'});
 
 					it('#should insert 2 values and dont insert 1',function(){
@@ -135,15 +135,23 @@ describe('mongo-query utility belt test',function () {
 
 			});
 
-			describe('#testing $pull modifier',function() {
-				_(db.beverages).update({name:'ZeroVatkaCola'},{$pull:{someArray:'two'}});
-				var doc = _(db.beverages).findOne({name:'ZeroVatkaCola'});
+			describe('#testing $pull modifier', function() {
+				_(db.beverages).update({name : 'ZeroVatkaCola'}, {$pull: {someArray: 'two'}});
+				var doc = _(db.beverages).findOne({name : 'ZeroVatkaCola'});
 				it('#should pull two value',function() {
 					doc.someArray.should.have.length(2);
 				});
 			});
 
+			describe.only('#testing string based deep modifiers', function () {
+				_(db.beverages).update({name : 'ZeroVatkaCola'}, {$set: {'nested.field': 123}});
 
+				var doc = _(db.beverages).findOne({name : 'ZeroVatkaCola'});
+				it('#should have nested.field assignment',function() {
+					console.log('doc: ', doc);
+					doc.should.have.deep.property('nested.field').equal(123);
+				});
+			});
 		});
 	});
 

@@ -1,8 +1,8 @@
 var bson = require('bson');
 var ObjectID = bson.ObjectID;
+var objectUtil = require('./objectUtil');
 
 var checkArrayPresence = function(doc,key,modifier) {
-
 	var filtered = doc[key].filter(function(item){
 		return item == modifier[key];
 	});
@@ -11,43 +11,46 @@ var checkArrayPresence = function(doc,key,modifier) {
 };
 
 var modifiers = {
-	'$set': function(doc,modifier) {
+	'$set': function(doc, modifier) {
 		Object.keys(modifier).forEach(function(key) {
-			doc[key] = modifier[key];
+			console.log("modifier value: ", objectUtil.prop(key)(modifier));
+			objectUtil.setProp(key)(doc, objectUtil.prop(key)(modifier));
 		});
 		return doc;
 	},
 
 	'$unset': function(doc,modifier) {
 		Object.keys(modifier).forEach(function(key) {
-			delete doc[key];
+			objectUtil.deleteProp(doc, key);
 		});
 		return doc;
 	},
 
-	'$addToSet': function(doc,modifier) {
+	'$addToSet': function(doc, modifier) {
 		Object.keys(modifier).forEach(function(key) {
-			if(!doc[key] instanceof Array){
-				throw '$addToSet called on non array property'+key;
+			var docProperty = objectUtil.prop(key)(doc);
+			if(!docProperty instanceof Array){
+				throw '$addToSet called on non array property' + key;
 			}
 			var isPresent;
+			var modifierProperty = objectUtil.prop(key)(modifier);
 
-			if(modifier[key].$each && modifier[key].$each instanceof Array) {
-				modifier[key].$each.forEach(function (modifierItem) {
+			if(modifierProperty.$each && modifierProperty.$each instanceof Array) {
+				modifierProperty.$each.forEach(function (modifierItem) {
 
-					var mod= {};
-					mod[key] = modifierItem;
-					isPresent = checkArrayPresence(doc,key,mod);
+					var mod = {};
+					objectUtil.setProp(key)(mod, modifierItem);
+					isPresent = checkArrayPresence(doc, key, mod);
 
 					if (!isPresent) {
-						doc[key].push(modifierItem);
+						docProperty.push(modifierItem);
 					}
 				});
 			}
 			else {
-				isPresent = checkArrayPresence(doc,key,modifier);
+				isPresent = checkArrayPresence(doc, key, modifier);
 				if (!isPresent) {
-					doc[key].push(modifier[key]);
+					docProperty.push(modifierProperty);
 				}
 			}
 		});
@@ -57,31 +60,36 @@ var modifiers = {
 
 	'$inc': function(doc, modifier) {
 		Object.keys(modifier).forEach(function(key) {
-			doc[key]+=modifier[key];
+			var docProp = objectUtil.prop(key)(doc);
+			var modifierValue = objectUtil.prop(key, modifier);
+			docProp += modifierValue;
 		});
 		return doc;
 	},
 
 	'$rename': function(doc, modifier) {
 		Object.keys(modifier).forEach(function(key) {
-			doc[modifier[key]] = doc[key];
-			delete doc[key];
+			var newPropertyKey = objectUtil.prop(key)(modifier);
+			objectUtil.renameProp(doc, key, newPropertyKey);
 		});
 		return doc;
 	},
 
 	$pop: function(doc, modifier) {
 		Object.keys(modifier).forEach(function(key) {
-			if (!doc[key] instanceof Array) {
+			var property = objectUtil.prop(key)(doc);
+			var modifierValue = objectUtil.prop(key, modifier);
+
+			if (!property instanceof Array) {
 				throw "property " + key + " is not array";
 			}
 
-			if (modifier[key] == 1) {
-				doc[key].pop();
+			if (modifierValue == 1) {
+				property.pop();
 			}
 
-			else if (modifier[key] == -1) {
-				doc[key].shift();
+			else if (modifierValue == -1) {
+				property.shift();
 			}
 		});
 
@@ -90,34 +98,37 @@ var modifiers = {
 
 	$push: function(doc, modifier) {
 		Object.keys(modifier).forEach(function(key) {
-			if (!doc[key] instanceof Array) {
+			var property = objectUtil.prop(key)(doc);
+			var modifierProperty = objectUtil.prop(key)(modifier);
+
+			if (!property instanceof Array) {
 				throw "property " + key + " is not array";
 			}
 
-			if(modifier[key].$each && modifier[key].$each instanceof Array) {
-				modifier[key].$each.forEach(function (modifierItem) {
-
-					doc[key].push(modifierItem);
+			if(modifierProperty.$each && modifierProperty.$each instanceof Array) {
+				modifierProperty.$each.forEach(function (modifierItem) {
+					property.push(modifierItem);
 				});
 			}
 			else {
-				doc[key].push(modifier[key]);
+				property.push(modifierProperty);
 			}
 		});
 
 		return doc;
 	},
 
-	$pull: function(doc,modifier) {
+	$pull: function(doc, modifier) {
 		Object.keys(modifier).forEach(function (key) {
+			var property = objectUtil.prop(key)(doc);
+			var modifierProperty = objectUtil.prop(key)(modifier);
 
-			if (!doc[key] instanceof Array) {
-				throw "property " + key + "is not array";
-			}
+			if (!property instanceof Array) {
+				throw "property " + key + "is not array";			}
 
-			var subCollection = new Wrap(doc[key].slice());
-			subCollection.remove(modifier[key]); //todo: UGLY AS SHIT
-			doc[key] = subCollection._data;
+			var subCollection = new Wrap(property.slice());
+			subCollection.remove(modifierProperty); //todo: UGLY AS SHIT
+			objectUtil.setProp(key)(doc, subCollection._data);
 		});
 
 		return doc;
@@ -126,24 +137,29 @@ var modifiers = {
 
 var comparsionOperators = {
 	'$gt': function(doc, field, value) {
-		return doc[field]>value;
+		var property = objectUtil.prop(field)(doc);
+		return property > value;
 	},
 	'$gte': function(doc, field, value) {
-		return doc[field]>=value;
+		var property = objectUtil.prop(field)(doc);
+		return property >= value;
 	},
 	'$lt': function(doc, field, value) {
-		return doc[field]<value;
+		var property = objectUtil.prop(field)(doc);
+		return property < value;
 	},
 	'$lte': function(doc, field, value) {
-		return doc[field]<=value;
+		var property = objectUtil.prop(field)(doc);
+		return property <= value;
 	},
 
 	'$in': function(doc, field, value) {
+		var property = objectUtil.prop(field)(doc);
 		if(!value instanceof Array){
 			throw 'should set an array for $in call';
 		}
-		if(doc[field] instanceof Array){
-			return doc[field].some(function(docFieldItem) {
+		if(property instanceof Array){
+			return property.some(function(docFieldItem) {
 				return value.some(function(valueFieldItem) {
 					return docFieldItem == valueFieldItem;
 				});
@@ -151,7 +167,7 @@ var comparsionOperators = {
 		}
 		else{
 			return value.some(function(valueItem) {
-				return doc[field] == valueItem;
+				return property == valueItem;
 			});
 		}
 	},
@@ -159,29 +175,33 @@ var comparsionOperators = {
 		return !this.$in(doc, field, value);
 	},
 	'$regex': function(doc, field, value) {
-		return value.test(doc[field]);
+		var property = objectUtil.prop(field)(doc);
+		return value.test(property);
 	},
 
 	'$ne': function(doc, field, value) {
-
-		return doc[field] != value;
+		var property = objectUtil.prop(field)(doc);
+		return property != value;
 	},
 
 	'$exists': function(doc, field, value) {
-		return (doc[field] !== undefined) === value; //null values does not include
+		var property = objectUtil.prop(field)(doc);
+		return (property !== undefined) === value; //null values does not include
 	},
 
 	$size: function(doc, field, value) {
-		if (doc[field] && doc[field].length ) {
-			return doc[field].length === value;
+		var property = objectUtil.prop(field)(doc);
+		if (property && property.length ) {
+			return property.length === value;
 		}
 		return false;
 	},
 
 	$all: function(doc, field, value) {
-		if (doc[field]) {
+		var property = objectUtil.prop(field)(doc);
+		if (property) {
 			return value.every(function (valueItem) {
-				doc[field].some(function (docFieldItem) {
+				property.some(function (docFieldItem) {
 					docFieldItem == valueItem;
 				});
 			});
@@ -190,8 +210,9 @@ var comparsionOperators = {
 	},
 
 	$elemMatch: function(doc, field, condition) {
-		if(doc[field]){
-		return doc[field].some(function (element) {
+		var property = objectUtil.prop(field)(doc);
+		if(property) {
+		return property.some(function (element) {
 			return _allKeysValid(condition,element);
 			});
 		}
@@ -202,29 +223,29 @@ var comparsionOperators = {
 };
 
 var logicalOperators = {
-	$or: function(doc,array) {
+	$or: function(doc, array) {
 		return array.some(function (condition) {
 			return _allKeysValid(condition,doc);
 		});
 	},
 
-	$and: function(doc,array) {
+	$and: function(doc, array) {
 		return array.every(function (condition) {
-			return _allKeysValid(condition,doc);
+			return _allKeysValid(condition, doc);
 		});
 	},
 
 	$not: function(doc, condition) {
-		return !_allKeysValid(condition,doc);
+		return !_allKeysValid(condition, doc);
 	},
 
-	$nor: function(doc,array) {
-		return !this.$and(doc,array);
+	$nor: function(doc, array) {
+		return !this.$and(doc, array);
 	}
 
 };
 //todo:wtf
-function areEqual (field1,field2) {
+function areEqual (field1, field2) {
 	if (field1 instanceof ObjectID) {
 		return field1.toString() === field2.toString();
 	}
