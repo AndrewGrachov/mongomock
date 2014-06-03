@@ -110,7 +110,7 @@ Collection.prototype.remove = function(query,callback) {
 	callback();
 };
 
-Collection.prototype.findAndModify = function(query,modifier,options,callback) {
+Collection.prototype.findAndModify = function(query, sort, modifier, options, callback) {
 	if ('function' === typeof options) {
 		callback = options, options = {};
 	}
@@ -127,7 +127,7 @@ Collection.prototype.findAndModify = function(query,modifier,options,callback) {
 		delete modifier.$set._id;
 	}
 
-	var doc = _(this._data).findAndModify(query,modifier,options);
+	var doc = _(this._data).findAndModify(query, modifier, options);
 	this._restore();
 	callback(null,doc);
 };

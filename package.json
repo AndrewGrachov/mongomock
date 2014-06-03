@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/AndrewGrachov/mongomock"
   },
-  "version": "0.0.5",
+  "version": "0.0.7",
   "dependencies": {
     "bson": "*"
   },
