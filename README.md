@@ -49,6 +49,14 @@ db.fruits.find({'suppliers.0.name':'anonymous'});
 
 Proper *findAndModify* support with upsert and 'new' options
 
+**Update 0.0.8**
+
+Proper string-based modifiers. '$' sign is not supported yet
+
+``
+db.fruits.update({}, {'suppliers.0.name' : 'anonymous'});
+``
+
 #Testing
 
 

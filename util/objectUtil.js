@@ -10,17 +10,22 @@ function prop(name) {
 		}
 		var property = object;
 		for (var i = 0; i < propertiesArray.length; i++) {
-			property = property[propertiesArray[i]];
+			if (typeof propertiesArray[i + 1] === 'number' && propertiesArray[i] instanceof Array) {
+				property = property[propertiesArray[i]][propertiesArray[i + 1]];
+				i++;
+			} else {
+				property = property[propertiesArray[i]];
 
-			if (typeof(property) === 'undefined') {
-				return;
-			}
-
-			if (property === null) {
-				if (i + 1 === propertiesArray.length) {
-					return null;
-				} else {
+				if (typeof(property) === 'undefined') {
 					return;
+				}
+
+				if (property === null) {
+					if (i + 1 === propertiesArray.length) {
+						return null;
+					} else {
+						return;
+					}
 				}
 			}
 		}
