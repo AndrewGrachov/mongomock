@@ -33,7 +33,7 @@ var db = {
 
 var mongo = new MongoMock(db);
 
-mongo.collection('fruits').find({price:20},function(err,fruits){
+mongo.collection('fruits').find({price:20}).toArray(function(err,fruits){
   console.log("YAHOO we have fruits with price 20 now!",fruits);
 })
 ```
