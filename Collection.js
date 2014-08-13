@@ -1,5 +1,5 @@
 var _ = require('./util');
-
+var Cursor = require('./Cursor');
 function noop() {
 }
 
@@ -12,21 +12,11 @@ Collection.prototype._restore = function () {
 	this._mutableData = this._data.slice();
 };
 
-Collection.prototype.find = function (query, options, callback) {
-	if ('function' === typeof options) {
-		callback = options, options = {};
-	}
-
-	if (options === null) {
-		options = {};
-	}
-
-	if ('function' !== typeof callback) {
-		callback = null;
-	}
-
-	var data = _(this._mutableData.slice()).find(query, options);
-	callback(null, data);
+Collection.prototype.find = function (query, fields, options) {
+	query = query || {};
+	//source, query, fields, options
+	var cursor = new Cursor(this._mutableData.slice(), query, fields, options);
+	return cursor;
 };
 
 Collection.prototype.save = function (doc, callback) {

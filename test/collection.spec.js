@@ -31,7 +31,7 @@ describe('Collection test', function () {
 
 	describe('when getting all collection by empty find criteria', function () {
 		before(function (done) {
-			mongo.collection('fruits').find({}, function (err, data) {
+			mongo.collection('fruits').find({}).toArray(function (err, data) {
 				result = data;
 				done();
 			});
@@ -45,7 +45,7 @@ describe('Collection test', function () {
 	describe('when filtering collection by basic criteria', function () {
 
 		before(function (done) {
-			mongo.collection('fruits').find({price: 20}, function (err, fruits) {
+			mongo.collection('fruits').find({price: 20}).toArray(function (err, fruits) {
 				result = fruits;
 				done();
 			});
@@ -64,7 +64,7 @@ describe('Collection test', function () {
 				{price: {$gte: 25}} ,
 				{tags: { $in: ['Turkey'] }}
 			]};
-			mongo.collection('fruits').find(criteria, function (err, fruits) {
+			mongo.collection('fruits').find(criteria).toArray(function (err, fruits) {
 				result = fruits;
 				done();
 			});
@@ -77,4 +77,17 @@ describe('Collection test', function () {
 
 	});
 
+	describe('when stream collection', function () {
+		var cursor, matchcollection = [];
+		before(function (done) {
+			cursor = mongo.collection('beverages').find();
+			cursor.on('data', function (doc) {
+				matchcollection.push(doc);
+			});
+			cursor.on('end', done);
+		});
+		it('should stream all beverages collection', function () {
+			matchcollection.should.have.length(3);
+		});
+	});
 });

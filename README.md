@@ -37,25 +37,8 @@ mongo.collection('fruits').find({price:20},function(err,fruits){
   console.log("YAHOO we have fruits with price 20 now!",fruits);
 })
 ```
-**Update 0.0.3**
-Now you are able to query your collections with string syntax, e.g., including arrays any level deep
-```
-db.fruits.find({'suppliers.name':'anonymous'});
-//or
-db.fruits.find({'suppliers.0.name':'anonymous'});
-```
-
-**Update 0.0.5**
-
-Proper *findAndModify* support with upsert and 'new' options
-
-**Update 0.0.8**
-
-Proper string-based modifiers. '$' sign is not supported yet
-
-``
-db.fruits.update({}, {'suppliers.0.name' : 'anonymous'});
-``
+**Update 0.1.0**
+basic cursor implementation without skip/limit chaining
 
 #Testing
 
@@ -67,9 +50,9 @@ npm test
 ```
 
 #Methods support
-  **collection.find(query,options,callback)**
+  **collection.find(query, fields, options)** - returns readable stream
 
-  **collection.findOne(query,callback)**
+  **collection.findOne(query, callback)**
 
   **collection.update(query,modifier,options,callback)**
 
