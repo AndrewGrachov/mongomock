@@ -10,8 +10,15 @@ function MongoMock (collections) {
 	});
 }
 
-MongoMock.prototype.collection = function(collectionName) {
-	return this[collectionName];
+MongoMock.prototype.collection = function(collectionName, callback) {
+	if(!callback) {
+		return this[collectionName];
+	}
+	return callback(null, this[collectionName]);
+};
+
+MongoMock.prototype.ensureIndex = function (collection, index, options, callback) {
+	callback(null, index);
 };
 
 module.exports = MongoMock;

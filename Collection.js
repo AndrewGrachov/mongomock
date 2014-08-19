@@ -19,7 +19,10 @@ Collection.prototype.find = function (query, fields, options) {
 	return cursor;
 };
 
-Collection.prototype.save = function (doc, callback) {
+Collection.prototype.save = function (doc, options, callback) {
+	if (!callback) {
+		callback = options;
+	}
 	if (doc._id) {
 		this.update({_id: doc._id}, doc, { upsert: true }, callback);
 	} else {
