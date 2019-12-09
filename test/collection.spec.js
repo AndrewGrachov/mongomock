@@ -90,4 +90,45 @@ describe('Collection test', function () {
 			matchcollection.should.have.length(3);
 		});
 	});
+
+	describe('sort collection asceding', function () {
+		before(function (done) {
+			mongo.collection('fruits').find().sort({name:1}).toArray(function (err, fruits) {
+				result = fruits;
+				done();
+			});
+		});
+		it('should show all fruits sorted', function () {
+			result[0].name.should.equal('Apple');
+		});
+	});
+	describe('sort collection desceding', function () {
+		before(function (done) {
+			mongo.collection('fruits').find().sort({price:-1}).toArray(function (err, fruits) {
+				result = fruits;
+				done();
+			});
+		});
+		it('should show all fruits sorted', function () {
+			result[0].name.should.equal('Orange');
+		});
+	});
+
+	describe('cursor handling with hasNext/next', function () {
+		before(function (done) {
+			result = mongo.collection('fruits').find();
+			done();
+		});
+		it('should iterate cursor item by item', function () {
+			var totalPrice = 0;
+			while (result.hasNext()) {
+				var item = result.next();
+				totalPrice+=item.price;
+			}
+			result.close();
+			totalPrice.should.equal(75); // All fruit prices acumulated 20+10+25+20
+		});
+	});
+
+
 });

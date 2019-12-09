@@ -55,47 +55,59 @@ Cursor.prototype._read = function () {
 };
 
 Cursor.prototype.toArray = function (callback) {
-	if (this.data==null) this.data = this._source.map(map(this._fields));
+	if (this.data===null) {
+		this.data = this._source.map(map(this._fields));
+	}
 	callback(null, this.data);
 };
 
 Cursor.prototype.sort = function(sortObj) {
-	if (this.data==null) this.data = this._source.map(map(this._fields));
+	if (this.data===null) {
+		this.data = this._source.map(map(this._fields));
+	}
 	this.data = this.data.sort(function(i1,i2){
 		for (var d in sortObj) {
 			if (sortObj.hasOwnProperty(d)) {
-				if (i1[d]>i2[d]) return sortObj[d];
-				if (i1[d]<i2[d]) return -1*sortObj[d];
+				if (i1[d]>i2[d]) {
+					return sortObj[d];
+				}
+				if (i1[d]<i2[d]) {
+					return -1*sortObj[d];
+				}
 			}
 		}
 		return 0;
-	})
+	});
 	return this;
-}
+};
 
 Cursor.prototype.hasNext = function() {
-	if (this.data==null) this.data = this._source.map(map(this._fields));
+	if (this.data===null) {
+		this.data = this._source.map(map(this._fields));
+	}
 	return this.index<this.data.length;
-}
+};
 
 Cursor.prototype.next = function() {
-	if (this.data==null) this.data = this._source.map(map(this._fields));
+	if (this.data===null) {
+		this.data = this._source.map(map(this._fields));
+	}
 	var dat = this.data[this.index];
 	this.index++;
 	return dat;
-}
+};
 
 Cursor.prototype.batchSize = function() {
 	return this;
-}
+};
 
 Cursor.prototype.addCursorFlag = function() {
 	return this;
-}
+};
 
 Cursor.prototype.close = function() {
 
-}
+};
 
 
 
