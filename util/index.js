@@ -315,6 +315,10 @@ function _allKeysValid(query, item) {
 		}
 		// price:{gte:32}
 		else if (typeof query[key] == 'object') {
+			//Add filter by strict date matching
+			if (query[key] instanceof Date) {
+				return item[key] instanceof Date && query[key].getTime()===item[key].getTime();
+			}
 			return Object.keys(query[key]).every(function (operator) {
 				return comparsionOperators[operator](item, key, query[key][operator]);
 			});
