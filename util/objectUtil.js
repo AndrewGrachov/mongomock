@@ -16,7 +16,7 @@ function prop(name) {
 			} else {
 				property = property[propertiesArray[i]];
 
-				if (typeof(property) === 'undefined') {
+				if (typeof property === 'undefined') {
 					return;
 				}
 
@@ -41,7 +41,7 @@ function setProp(name) {
 		}
 		var property = object;
 		for (var i = 0; i < propertiesArray.length - 1; i++) {
-			if (typeof(property[propertiesArray[i]]) === 'undefined') {
+			if (typeof property[propertiesArray[i]] === 'undefined') {
 				property[propertiesArray[i]] = {};
 			}
 			property = property[propertiesArray[i]];
@@ -106,5 +106,5 @@ module.exports = {
 	deleteProp: deleteProp,
 	addArrayItemsPropIfNotExist: addArrayItemsPropIfNotExist,
 	renameArrayItemsProp: renameArrayItemsProp,
-	deleteArrayItemsProp: deleteArrayItemsProp
+	deleteArrayItemsProp: deleteArrayItemsProp,
 };

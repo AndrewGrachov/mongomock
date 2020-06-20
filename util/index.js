@@ -11,21 +11,21 @@ var checkArrayPresence = function (doc, key, modifier) {
 };
 
 var modifiers = {
-	'$set': function (doc, modifier) {
+	$set: function (doc, modifier) {
 		Object.keys(modifier).forEach(function (key) {
 			objectUtil.setProp(key)(doc, modifier[key]);
 		});
 		return doc;
 	},
 
-	'$unset': function (doc, modifier) {
+	$unset: function (doc, modifier) {
 		Object.keys(modifier).forEach(function (key) {
 			objectUtil.deleteProp(doc, key);
 		});
 		return doc;
 	},
 
-	'$addToSet': function (doc, modifier) {
+	$addToSet: function (doc, modifier) {
 		Object.keys(modifier).forEach(function (key) {
 			var docProperty = objectUtil.prop(key)(doc);
 			if (!docProperty instanceof Array) {
@@ -36,7 +36,6 @@ var modifiers = {
 
 			if (modifierProperty.$each && modifierProperty.$each instanceof Array) {
 				modifierProperty.$each.forEach(function (modifierItem) {
-
 					var mod = {};
 					objectUtil.setProp(key)(mod, modifierItem);
 					isPresent = checkArrayPresence(doc, key, mod);
@@ -45,8 +44,7 @@ var modifiers = {
 						docProperty.push(modifierItem);
 					}
 				});
-			}
-			else {
+			} else {
 				isPresent = checkArrayPresence(doc, key, modifier);
 				if (!isPresent) {
 					docProperty.push(modifierProperty);
@@ -54,10 +52,9 @@ var modifiers = {
 			}
 		});
 		return doc;
-
 	},
 
-	'$inc': function (doc, modifier) {
+	$inc: function (doc, modifier) {
 		Object.keys(modifier).forEach(function (key) {
 			var docProp = objectUtil.prop(key)(doc);
 			var modifierValue = modifier[key];
@@ -66,7 +63,7 @@ var modifiers = {
 		return doc;
 	},
 
-	'$rename': function (doc, modifier) {
+	$rename: function (doc, modifier) {
 		Object.keys(modifier).forEach(function (key) {
 			var newPropertyKey = objectUtil.prop(key)(modifier);
 			objectUtil.renameProp(doc, key, newPropertyKey);
@@ -80,14 +77,12 @@ var modifiers = {
 			var modifierValue = modifier[key];
 
 			if (!property instanceof Array) {
-				throw "property " + key + " is not array";
+				throw 'property ' + key + ' is not array';
 			}
 
 			if (modifierValue == 1) {
 				property.pop();
-			}
-
-			else if (modifierValue == -1) {
+			} else if (modifierValue == -1) {
 				property.shift();
 			}
 		});
@@ -101,15 +96,14 @@ var modifiers = {
 			var modifierProperty = modifier[key];
 
 			if (!property instanceof Array) {
-				throw "property " + key + " is not array";
+				throw 'property ' + key + ' is not array';
 			}
 
 			if (modifierProperty.$each && modifierProperty.$each instanceof Array) {
 				modifierProperty.$each.forEach(function (modifierItem) {
 					property.push(modifierItem);
 				});
-			}
-			else {
+			} else {
 				property.push(modifierProperty);
 			}
 		});
@@ -123,7 +117,7 @@ var modifiers = {
 			var modifierProperty = modifier[key];
 
 			if (!property instanceof Array) {
-				throw "property " + key + "is not array";
+				throw 'property ' + key + 'is not array';
 			}
 
 			var subCollection = new Wrap(property.slice());
@@ -132,28 +126,28 @@ var modifiers = {
 		});
 
 		return doc;
-	}
+	},
 };
 
 var comparsionOperators = {
-	'$gt': function (doc, field, value) {
+	$gt: function (doc, field, value) {
 		var property = objectUtil.prop(field)(doc);
 		return property > value;
 	},
-	'$gte': function (doc, field, value) {
+	$gte: function (doc, field, value) {
 		var property = objectUtil.prop(field)(doc);
 		return property >= value;
 	},
-	'$lt': function (doc, field, value) {
+	$lt: function (doc, field, value) {
 		var property = objectUtil.prop(field)(doc);
 		return property < value;
 	},
-	'$lte': function (doc, field, value) {
+	$lte: function (doc, field, value) {
 		var property = objectUtil.prop(field)(doc);
 		return property <= value;
 	},
 
-	'$in': function (doc, field, value) {
+	$in: function (doc, field, value) {
 		var property = objectUtil.prop(field)(doc);
 		if (!value instanceof Array) {
 			throw 'should set an array for $in call';
@@ -164,8 +158,7 @@ var comparsionOperators = {
 					return docFieldItem == valueFieldItem;
 				});
 			});
-		}
-		else {
+		} else {
 			return value.some(function (valueItem) {
 				return property == valueItem;
 			});
@@ -174,17 +167,17 @@ var comparsionOperators = {
 	$nin: function (doc, field, value) {
 		return !this.$in(doc, field, value);
 	},
-	'$regex': function (doc, field, value) {
+	$regex: function (doc, field, value) {
 		var property = objectUtil.prop(field)(doc);
 		return value.test(property);
 	},
 
-	'$ne': function (doc, field, value) {
+	$ne: function (doc, field, value) {
 		var property = objectUtil.prop(field)(doc);
 		return property != value;
 	},
 
-	'$exists': function (doc, field, value) {
+	$exists: function (doc, field, value) {
 		var property = objectUtil.prop(field)(doc);
 		return (property !== undefined) === value; //null values does not include
 	},
@@ -217,9 +210,7 @@ var comparsionOperators = {
 			});
 		}
 		return false;
-	}
-
-
+	},
 };
 
 var logicalOperators = {
@@ -241,8 +232,7 @@ var logicalOperators = {
 
 	$nor: function (doc, array) {
 		return !this.$and(doc, array);
-	}
-
+	},
 };
 //todo:wtf
 function areEqual(field1, field2) {
@@ -267,8 +257,7 @@ function _updateDoc(doc, modifier, wrapped) {
 	Object.keys(modifier).forEach(function (key) {
 		if (!modifiers[key]) {
 			throw 'this modifier is not supported for now or invalid: ' + key;
-		}
-		else {
+		} else {
 			var modifierValue = modifier[key];
 			var modifiedDoc = modifiers[key](doc, modifierValue);
 			var index = wrapped._data.indexOf(doc);
@@ -277,7 +266,6 @@ function _updateDoc(doc, modifier, wrapped) {
 	});
 	return;
 }
-
 
 function Wrap(array) {
 	this._data = array;
@@ -289,7 +277,6 @@ function Constructor(array) {
 }
 
 function _allKeysValid(query, item) {
-
 	if (typeof query !== 'object') {
 		return query === item;
 	}
@@ -300,14 +287,13 @@ function _allKeysValid(query, item) {
 
 	function anyMatchOf(key, pathStep, item) {
 		return item[pathStep].some(function (subArrayItem) {
-			var subQueryKey = key.replace(new RegExp(pathStep + '\\.'), "");
+			var subQueryKey = key.replace(new RegExp(pathStep + '\\.'), '');
 			var subQuery = {};
 			subQuery[subQueryKey] = query[key];
 
 			return _allKeysValid(subQuery, subArrayItem);
 		});
 	}
-
 
 	return Object.keys(query).every(function (key) {
 		if (logicalOperators[key]) {
@@ -317,26 +303,23 @@ function _allKeysValid(query, item) {
 		else if (typeof query[key] == 'object') {
 			//Add filter by strict date matching
 			if (query[key] instanceof Date) {
-				return item[key] instanceof Date && query[key].getTime()===item[key].getTime();
+				return item[key] instanceof Date && query[key].getTime() === item[key].getTime();
 			}
 			return Object.keys(query[key]).every(function (operator) {
 				return comparsionOperators[operator](item, key, query[key][operator]);
 			});
-		}
-		else if (typeof key === 'string' && new RegExp('.*\\..*').test(key)) {
+		} else if (typeof key === 'string' && new RegExp('.*\\..*').test(key)) {
 			var properties = key.split('.');
 			var path = [];
-
 
 			for (var i = 0; i < properties.length; i++) {
 				var property = properties[i];
 				path.push(property);
-				var pathStep = path.join(".");
+				var pathStep = path.join('.');
 				if (item[pathStep] instanceof Array) {
 					var nextOperator = parseInt(properties[i + 1]);
 					if (!isNaN(nextOperator)) {
-
-						var subQueryKey = key.replace(new RegExp(pathStep + '\\.' + properties[i + 1] + '\\.'), "");
+						var subQueryKey = key.replace(new RegExp(pathStep + '\\.' + properties[i + 1] + '\\.'), '');
 						var subQuery = {};
 						subQuery[subQueryKey] = query[key];
 						var subArrayItem = item[pathStep][properties[i + 1]];
@@ -355,7 +338,6 @@ function _allKeysValid(query, item) {
 }
 
 Wrap.prototype.find = function (query, options) {
-
 	options = options || {};
 
 	var filteredArray = this._data.filter(function (item) {
@@ -394,8 +376,7 @@ Wrap.prototype.update = function (query, modifier, options) {
 			_updateDoc(doc, modifier, self);
 			counter++;
 		});
-	}
-	else {
+	} else {
 		var doc = this.findOne(query);
 		if (doc) {
 			counter++;
@@ -442,12 +423,10 @@ Wrap.prototype.findAndModify = function (query, modifier, options) {
 	if (doc) {
 		if (options.new) {
 			_updateDoc(doc, modifier, this);
-		}
-		else {
+		} else {
 			_updateDoc(JSON.parse(JSON.stringify(doc)), modifier, this);
 		}
-	}
-	else if (!modifier.$set && options.upsert) {
+	} else if (!modifier.$set && options.upsert) {
 		doc = this.insert(modifier);
 	}
 	return doc;

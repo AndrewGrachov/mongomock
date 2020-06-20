@@ -1,7 +1,6 @@
 [![NPM](https://nodei.co/npm/mongomock.png?downloads=true)](https://nodei.co/npm/mongomock/)
 
-mongomock
-=========
+# mongomock
 
 mongoDb-native mocking library
 
@@ -15,6 +14,7 @@ You can try a playground [here](http://andrewgrachov.github.io/mongo-query/)
 **bson**
 
 #Install
+
 ```
 npm install mongomock
 ```
@@ -37,11 +37,11 @@ mongo.collection('fruits').find({price:20}).toArray(function(err,fruits){
   console.log("YAHOO we have fruits with price 20 now!",fruits);
 })
 ```
+
 **Update 0.1.0**
 basic cursor implementation without skip/limit chaining
 
 #Testing
-
 
 Tests use mocha. Install mocha globally, then run
 
@@ -50,67 +50,67 @@ npm test
 ```
 
 #Methods support
-  **collection.find(query, fields, options)** - returns readable stream
+**collection.find(query, fields, options)** - returns readable stream
 
-  **collection.findOne(query, callback)**
+**collection.findOne(query, callback)**
 
-  **collection.update(query,modifier,options,callback)**
+**collection.update(query,modifier,options,callback)**
 
-  **collection.insert(doc,callback)**
+**collection.insert(doc,callback)**
 
-  **collection.remove(query,callback)**
+**collection.remove(query,callback)**
 
-  **collection.findAndModify(doc,modifier,options,callback)**
+**collection.findAndModify(doc,modifier,options,callback)**
 
-  **collection.save(doc,callback)**
+**collection.save(doc,callback)**
 
 #Query operators support:
-  **$gte**
+**\$gte**
 
-  **$gt**
+**\$gt**
 
-  **$lt**
+**\$lt**
 
-  **$lte**
+**\$lte**
 
-  **$in**
+**\$in**
 
-  **$regex**
+**\$regex**
 
-  **$and**
+**\$and**
 
-  **$or**
+**\$or**
 
-  **$ne**
+**\$ne**
 
-  **$nin**
+**\$nin**
 
-  **$size**
+**\$size**
 
-  **$elemMatch**
+**\$elemMatch**
 
-  **$exists**
+**\$exists**
 
-  **$all**
+**\$all**
 
 #Modifier operators support
-  **$set**
+**\$set**
 
-  **$unset**
+**\$unset**
 
-  **$inc**
+**\$inc**
 
-  **$addToSet**
+**\$addToSet**
 
-  **$rename**
+**\$rename**
 
-  **$pull**
+**\$pull**
 
-  **$push**
+**\$push**
 
-  **$each**
+**\$each**
 
 #On the way
+
 1. Date(and types) support
 2. projections support
-

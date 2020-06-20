@@ -1,0 +1,33 @@
+{
+	"printWidth": 120,
+	"arrowParens": "always",
+	"semi": true,
+	"useTabs": true,
+	"tabWidth": 4,
+	"bracketSpacing": false,
+	"jsxBracketSameLine": false,
+	"singleQuote": true,
+	"trailingComma": "es5",
+	"overrides": [
+		{
+			"files": [".prettierrc", ".eslintrc", ".stylelintrc", ".babelrc"],
+			"options": {
+				"parser": "json"
+			}
+		},
+		{
+			"files": ["*.yaml", "*.yml"],
+			"options": {
+				"useTabs": false,
+				"tabWidth": 2
+			}
+		},
+		{
+			"files": ["package.json"],
+			"options": {
+				"useTabs": false,
+				"tabWidth": 2
+			}
+		}
+	]
+}

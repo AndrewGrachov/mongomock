@@ -9,16 +9,17 @@
     "bson": "*"
   },
   "devDependencies": {
-    "jshint": "*",
-    "mocha-jshint": "0.0.7",
     "chai": "^1.9.1",
-    "sinon": "^1.9.1",
-    "sinon-chai": "^2.5.0",
-    "mongojs": "^0.12.0",
+    "expect.js": "~0.3.1",
     "mocha": "~1.20.0",
-    "expect.js": "~0.3.1"
+    "prettier": "^2.0.5",
+    "sinon": "^1.9.1",
+    "sinon-chai": "^2.5.0"
   },
   "scripts": {
-    "test": "node test.js"
+    "test": "node test.js",
+    "lint:ts": "eslint ./src/**/*.ts ./test/**/*.ts",
+    "prettier:fix": "prettier --write .",
+    "prettier:check": "prettier --check ."
   }
 }
