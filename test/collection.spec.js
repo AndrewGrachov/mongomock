@@ -7,9 +7,9 @@ describe('Collection test', function () {
 		var db = {
 			fruits: [
 				{name: 'Banana', price: 20},
-				{name: 'Apple', price: 10, tags: ['Africa', 'Turkey']},
-				{name: 'Orange', price: 25},
-				{name: 'Pineapple', price: 20}
+				{name: 'Apple', price: 10, tags: ['Africa', 'Turkey'], dueDate:new Date("2020-01-15T00:00:00.000Z")},
+				{name: 'Orange', price: 25, dueDate:new Date("2019-11-01T00:00:00.000Z")},
+				{name: 'Pineapple', price: 20, dueDate:new Date("2019-12-10T00:00:00.000Z")}
 			],
 			beverages: [
 				{name: 'CocaCola', price: 15},
@@ -56,6 +56,19 @@ describe('Collection test', function () {
 		});
 	});
 
+	describe('when filtering collection by date equal criteria', function () {
+
+		before(function (done) {
+			mongo.collection('fruits').find({dueDate: new Date("2019-11-01T00:00:00.000Z")}).toArray(function (err, fruits) {
+				result = fruits;
+				done();
+			});
+		});
+
+		it('#should return 1 fruits with due date 01 Nov 2019', function () {
+			result[0].name.should.equal('Orange');
+		});
+	});
 
 	describe('when filtering collection by complex criteria', function () {
 
