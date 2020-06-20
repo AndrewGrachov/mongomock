@@ -1,8 +1,6 @@
 var MongoMock = require('../MongoMock');
 var Collection = require('../Collection');
 
-//var expect = chai.expect;
-
 describe('When creating MongoMock', function () {
 	var mongo;
 

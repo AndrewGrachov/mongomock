@@ -12,7 +12,6 @@
     "chai": "^1.9.1",
     "expect.js": "~0.3.1",
     "mocha": "~1.20.0",
-    "mongojs": "^0.12.0",
     "prettier": "^2.0.5",
     "sinon": "^1.9.1",
     "sinon-chai": "^2.5.0"
