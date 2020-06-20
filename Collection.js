@@ -1,7 +1,6 @@
 var _ = require('./util');
 var Cursor = require('./Cursor');
-function noop() {
-}
+function noop() {}
 
 function Collection(initialArray) {
 	this._data = initialArray.slice();
@@ -24,7 +23,7 @@ Collection.prototype.save = function (doc, options, callback) {
 		callback = options;
 	}
 	if (doc._id) {
-		this.update({_id: doc._id}, doc, { upsert: true }, callback);
+		this.update({_id: doc._id}, doc, {upsert: true}, callback);
 	} else {
 		this.insert(doc, callback);
 	}
@@ -36,7 +35,7 @@ Collection.prototype.findOne = function (query, callback) {
 
 Collection.prototype.count = function (query, options, callback) {
 	if ('function' === typeof options) {
-		callback = options, options = {};
+		(callback = options), (options = {});
 	}
 	if (options === null) {
 		options = {};
@@ -58,7 +57,7 @@ Collection.prototype.toArray = function (callback) {
 
 Collection.prototype.insert = function (doc, options, callback) {
 	if ('function' === typeof options) {
-		callback = options, options = {};
+		(callback = options), (options = {});
 	}
 
 	if (options === null) {
@@ -76,7 +75,7 @@ Collection.prototype.insert = function (doc, options, callback) {
 
 Collection.prototype.update = function (query, modifier, options, callback) {
 	if ('function' === typeof options) {
-		callback = options, options = {};
+		(callback = options), (options = {});
 	}
 
 	if (options === null) {
@@ -106,7 +105,7 @@ Collection.prototype.remove = function (query, callback) {
 
 Collection.prototype.findAndModify = function (query, sort, modifier, options, callback) {
 	if ('function' === typeof options) {
-		callback = options, options = {};
+		(callback = options), (options = {});
 	}
 
 	if (options === null) {

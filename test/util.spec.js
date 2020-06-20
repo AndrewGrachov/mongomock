@@ -8,25 +8,29 @@ describe('mongo-query utility belt test', function () {
 			{name: 'Apple', price: 10, tags: ['Africa', 'Turkey']},
 			{name: 'Orange', price: 20},
 			{name: 'Pineapple', price: 20},
-			{name: 'Cucumber', price: 56, suppliers: [
-				{name: "anonymous234", subSuppliers: [
-					{name: "1", address: 'blahblah'}
-				]}
-			]}
+			{
+				name: 'Cucumber',
+				price: 56,
+				suppliers: [{name: 'anonymous234', subSuppliers: [{name: '1', address: 'blahblah'}]}],
+			},
 		],
 		beverages: [
 			{name: 'CocaCola', price: 15, suppliers: ['one', 'two', 'three']},
 			{name: 'MongoCola', price: 10, suppliers: ['one', 'two', 'three', 'four', 'five', 'six']},
 			{name: 'Pepsi', price: 25, suppliers: ['one', 'two', 'three', 'four', 'five']},
 			{name: 'BoobCola', price: 999, suppliers: ['one', 'two', 'three']},
-			{name: 'ZeroVatkaCola', price: 1000, suppliers: ['one', 'two', 'three'], someArray: ['one', 'two', 'three'], nested: {}, nestedObjectsArray: [
-				{someNestedField: 'value'}
-			]}
-		]
+			{
+				name: 'ZeroVatkaCola',
+				price: 1000,
+				suppliers: ['one', 'two', 'three'],
+				someArray: ['one', 'two', 'three'],
+				nested: {},
+				nestedObjectsArray: [{someNestedField: 'value'}],
+			},
+		],
 	};
 
 	describe('when querying with string expression on array elements', function () {
-
 		var fruits = _(db.fruits).find({'suppliers.name': 'anonymous234'});
 		var subArrayFruit = _(db.fruits).findOne({'suppliers.subSuppliers.0.name': 1});
 		it('#should have length 1', function () {
@@ -40,7 +44,6 @@ describe('mongo-query utility belt test', function () {
 	});
 
 	describe('when perfoming update operation', function () {
-
 		describe('#when success case without multiple, update first element with price 20, change it to 30', function () {
 			var counter = _(db.fruits).update({price: 20}, {$set: {price: 30}, $unset: {redundantField: 1}});
 			it('#should update 1 document', function () {
@@ -55,7 +58,7 @@ describe('mongo-query utility belt test', function () {
 		});
 
 		describe('#when success case with multiple. Changing all prices with 20 to 30', function () {
-			var counter = _(db.fruits).update({price: 20}, {$set: {price: 30}}, { multi: true });
+			var counter = _(db.fruits).update({price: 20}, {$set: {price: 30}}, {multi: true});
 			it('#should update 2 documents', function () {
 				counter.should.equal(2);
 			});
@@ -91,11 +94,9 @@ describe('mongo-query utility belt test', function () {
 		});
 
 		describe('#testing array modifiers', function () {
-
 			describe('#testing $push modifier', function () {
-
 				describe('#without $each', function () {
-					_(db.beverages).update({name: 'Pepsi'}, {$push: {'suppliers': 'six'}});
+					_(db.beverages).update({name: 'Pepsi'}, {$push: {suppliers: 'six'}});
 
 					var beverage = _(db.beverages).findOne({name: 'Pepsi'});
 
@@ -105,7 +106,10 @@ describe('mongo-query utility belt test', function () {
 				});
 
 				describe('#with $each modifier', function () {
-					_(db.beverages).update({name: 'MongoCola'}, {$push: {'suppliers': {$each: ['seven', 'eight', 'nine']}}});
+					_(db.beverages).update(
+						{name: 'MongoCola'},
+						{$push: {suppliers: {$each: ['seven', 'eight', 'nine']}}}
+					);
 					var beverage = _(db.beverages).findOne({name: 'MongoCola'});
 
 					it('should have suppliers field length === 9', function () {
@@ -132,14 +136,16 @@ describe('mongo-query utility belt test', function () {
 				});
 
 				describe('#when adding $each modifier', function () {
-					_(db.beverages).update({name: 'ZeroVatkaCola'}, {$addToSet: {suppliers: {$each: ['one', 'four', 'five']}}});
+					_(db.beverages).update(
+						{name: 'ZeroVatkaCola'},
+						{$addToSet: {suppliers: {$each: ['one', 'four', 'five']}}}
+					);
 					var beverage = _(db.beverages).findOne({name: 'ZeroVatkaCola'});
 
 					it('#should insert 2 values and dont insert 1', function () {
 						beverage.suppliers.should.have.length(5);
 					});
 				});
-
 			});
 
 			describe('#testing $pull modifier', function () {
@@ -169,7 +175,10 @@ describe('mongo-query utility belt test', function () {
 			});
 
 			describe('#testing string based deep modifiers when array with deep nesting', function () {
-				_(db.beverages).update({name: 'ZeroVatkaCola'}, {$set: {'nestedObjectsArray.0.someProperty': 'value modified'}});
+				_(db.beverages).update(
+					{name: 'ZeroVatkaCola'},
+					{$set: {'nestedObjectsArray.0.someProperty': 'value modified'}}
+				);
 
 				it('#should properly set up first item', function () {
 					var doc = _(db.beverages).findOne({name: 'ZeroVatkaCola'});
@@ -203,7 +212,11 @@ describe('mongo-query utility belt test', function () {
 		});
 
 		describe('#when its not found and upsert true', function () {
-			var beverage = _(db.beverages).findAndModify({name: 'someRandomBeverage'}, {price: 100, name: "someRandomFruit"}, {upsert: true});
+			var beverage = _(db.beverages).findAndModify(
+				{name: 'someRandomBeverage'},
+				{price: 100, name: 'someRandomFruit'},
+				{upsert: true}
+			);
 			it('#should return new object', function () {
 				beverage.should.have.property('price', 100);
 				beverage.should.have.property('name', 'someRandomFruit');
